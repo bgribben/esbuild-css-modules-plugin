@@ -11,6 +11,7 @@ export interface CssModulesOptions {
         filename: string
     }
     scopedNames?: string
+    sassOptions?: sass.Options<'sync'>
 }
 
 let js: string | null 
@@ -60,7 +61,7 @@ export function cssModulesPlugin(options?: CssModulesOptions): Plugin {
                 })
 
                 build.onLoad({filter: /\.module\.(scss|sass)$/}, async args => {
-                    const compiledCss = sass.compile(args.path);
+                    const compiledCss = sass.compile(args.path, options?.sassOptions);
                     const postcssModules = generateJS(build.initialOptions, options)
                     const postcssResult = await postcss(postcssModules).process(compiledCss.css, {
                         from: args.path,
